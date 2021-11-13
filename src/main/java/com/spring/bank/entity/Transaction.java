@@ -27,6 +27,16 @@ public class Transaction {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Transaction() {
+    }
+
+    public Transaction(int id, String transactionType, String transactionStatus, Integer transactionSum) {
+        this.id = id;
+        this.transactionType = transactionType;
+        this.transactionStatus = transactionStatus;
+        this.transactionSum = transactionSum;
+    }
+
     public int getId() {
         return id;
     }

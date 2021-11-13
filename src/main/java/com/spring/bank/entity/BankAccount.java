@@ -20,6 +20,13 @@ public class BankAccount {
     @OneToOne(mappedBy = "bankAccount")
     private User user;
 
+    public BankAccount() {
+    }
+
+    public BankAccount(int balance) {
+        this.balance = balance;
+    }
+
     public int getId() {
         return id;
     }

@@ -2,102 +2,82 @@ package com.spring.bank.controllers;
 
 
 import com.spring.bank.entity.Transaction;
-import com.spring.bank.entity.User;
-import com.spring.bank.repository.BankAccountDAO;
-import com.spring.bank.repository.TransactionDAO;
-import com.spring.bank.repository.UserDAO;
+import com.spring.bank.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
 
     @Autowired
-    UserDAO userDAO;
-    @Autowired
-    BankAccountDAO bankAccountDAO;
-    @Autowired
-    TransactionDAO transactionDAO;
+    TransactionService transactionService;
 
+    @PostMapping("/make_transaction/{id}")
+    public ResponseEntity<String> makeTransactionPost(
+            @PathVariable Integer id, @RequestBody Transaction transaction) {
 
-
-//    @GetMapping("/deposit/{id}")
-//    public ResponseEntity<Transaction> depositGet(ModelMap model, @PathVariable Integer id){
-//        Transaction transaction = new Transaction();
-//        User user = userDAO.findByid(id);
-//        Set<Transaction> trSet = user.getTransactions();
-//        for (Transaction t:trSet){
-//            String transactionType = t.getTransactionType();
-//            transaction.setTransactionType(transactionType);
-//        }
-//
-//
-//
-//        model.addAttribute("user", user);
-//
-//        return new ResponseEntity<>(transaction, HttpStatus.OK);
-//    }
-
-    @PostMapping("/deposit/{id}")
-    public String depositPost(ModelMap model, @PathVariable Integer id,
-                              @RequestParam(name="deposit_sum", required=false) Integer depositSum,
-                              @RequestParam(name="user_id", required=false) String userID){
-
-        User user = userDAO.findByid(id);
-        if (user.getBankAccount() != null) {
-            Transaction transaction = new Transaction();
-            LocalDate date = LocalDate.now();
-            transaction.setCreatedAt(date);
-            transaction.setTransactionType("deposit");
-            transaction.setUser(user);
-            transaction.setTransactionStatus("pending");
-            transaction.setTransactionSum(depositSum);
-            transactionDAO.save(transaction);
+        Boolean hasCreatedTransaction = transactionService.createTransaction(id, transaction);
+        if (hasCreatedTransaction) {
+            return new ResponseEntity<>("transaction created with pending status", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("a problem occurred", HttpStatus.NOT_ACCEPTABLE);
         }
-        else {
-            //some text that user doesnt have bank account, so cant do transactions
-        }
-        model.addAttribute("user", user);
-        return "redirect:/user_page/" + id;
     }
 
-    @GetMapping("/withdrow/{id}")
-    public String withdrowGet(ModelMap model, @PathVariable Integer id){
+    /**
+     * @param id          .
+     * @param transaction .
+     * @return .
+     */
+    @DeleteMapping("/cancel_transaction/{id}")
+    public ResponseEntity<String> cancelTransaction(
+            @PathVariable Integer id, @RequestBody Transaction transaction) {
 
-        User user = userDAO.findByid(id);
-        model.addAttribute("user", user);
-        return "/withdrow";
+        Boolean hasCanceledTransaction = transactionService.cancelTransaction(id, transaction);
+        if (hasCanceledTransaction) {
+            return new ResponseEntity<>("transaction canceled, success", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("problem occurred", HttpStatus.NOT_ACCEPTABLE);
+        }
+
     }
 
-    @PostMapping("/withdrow/{id}")
-    public String withdrowPost(ModelMap model, @PathVariable Integer id,
-                               @RequestParam(name="withdrow_sum", required=false) Integer depositSum,
-                               @RequestParam(name="user_id", required=false) String userID){
-
-        User user = userDAO.findByid(id);
-        if (user.getBankAccount() != null) {
-            Transaction transaction = new Transaction();
-            LocalDate date = LocalDate.now();
-            transaction.setCreatedAt(date);
-            transaction.setTransactionType("withdrow");
-            transaction.setUser(user);
-            transaction.setTransactionStatus("pending");
-            transaction.setTransactionSum(depositSum);
-            transactionDAO.save(transaction);
+    /**
+     * @param id .
+     * @return .
+     */
+    @GetMapping("/accept_transactions/{id}")
+    public ResponseEntity<List<Transaction>> acceptTransactionsGet(@PathVariable Integer id) {
+        List<Transaction> transactions = transactionService.getAllPendingTransactions(id);
+        if (transactions != null){
+            return new ResponseEntity<>(transactions, HttpStatus.OK);
         }
         else {
-            //some text that user doesnt have bank account, so cant do transactions
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
         }
+    }
 
-        model.addAttribute("user", user);
-        return "redirect:/user_page/" + id;
+    /**
+     * @param id          .
+     * @param transaction .
+     * @return .
+     */
+    @PostMapping("/accept_transactions/{id}")
+    public ResponseEntity<String> acceptTransactionsPost(
+            @PathVariable Integer id, @RequestBody Transaction transaction) {
+
+        Boolean hasAcceptedTransaction = transactionService.acceptTransaction(id, transaction);
+        if (hasAcceptedTransaction){
+            return new ResponseEntity<>("approved", HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
 }
