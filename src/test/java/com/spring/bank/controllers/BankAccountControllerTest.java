@@ -1,11 +1,11 @@
 package com.spring.bank.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.bank.entity.BankAccount;
-import com.spring.bank.service.BankAccountService;
-import org.junit.jupiter.api.Test;
+import com.spring.bank.entities.BankAccount;
+import com.spring.bank.services.BankAccountService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -57,8 +58,8 @@ public class BankAccountControllerTest {
     public void createBankAccount() throws Exception{
         when(bankAccountService.createBankAccount(any(), any())).thenReturn(bankAcc);
         mockMvc.perform(post("/bank_account/create_bank_account/2").
-                contentType(MediaType.APPLICATION_JSON).
-                content(asJsonString(bankAcc))).
+                        contentType(MediaType.APPLICATION_JSON).
+                        content(asJsonString(bankAcc))).
                 andExpect(status().isOk());
         verify(bankAccountService,times(1)).createBankAccount(any(), any());
     }

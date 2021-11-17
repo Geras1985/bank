@@ -1,26 +1,21 @@
-package com.spring.bank.service.impl;
+package com.spring.bank.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.bank.entity.BankAccount;
-import com.spring.bank.entity.User;
+import com.spring.bank.entities.BankAccount;
+import com.spring.bank.entities.User;
 import com.spring.bank.enums.Role;
-import com.spring.bank.repository.BankAccountRepo;
-import com.spring.bank.repository.UserRepo;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.spring.bank.repositories.BankAccountRepo;
+import com.spring.bank.repositories.UserRepo;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class BankAccountServiceImplTest {
@@ -54,14 +49,13 @@ public class BankAccountServiceImplTest {
     }
 
     @Test
-    public void createBankAccountTest() throws Exception {
+    public void createBankAccountTest() {
         when(userRepo.findByid(any())).thenReturn(user1);
-        when(userRepo.findByUsername(any())).thenReturn(user);
+        when(userRepo.findByUsername(any())).thenReturn(java.util.Optional.ofNullable(user));
         when(bankAccountRepo.save(any())).thenReturn(bankAcc);
         when(userRepo.save(any())).thenReturn(null);
         BankAccount acc = service.createBankAccount(1, user);
         Assertions.assertNotNull(acc);
         Assertions.assertEquals(0, acc.getBalance());
     }
-
 }

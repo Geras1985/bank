@@ -1,8 +1,8 @@
 package com.spring.bank.controllers;
 
 
-import com.spring.bank.entity.Transaction;
-import com.spring.bank.service.TransactionService;
+import com.spring.bank.entities.Transaction;
+import com.spring.bank.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping("/api/transaction")
 public class TransactionController {
 
     @Autowired
     TransactionService transactionService;
 
-    @PostMapping("/make_transaction/{id}")
+    @PostMapping("/create/{id}")
     public ResponseEntity<String> makeTransactionPost(
             @PathVariable Integer id, @RequestBody Transaction transaction) {
 
@@ -34,7 +34,7 @@ public class TransactionController {
      * @param transaction .
      * @return .
      */
-    @DeleteMapping("/cancel_transaction/{id}")
+    @DeleteMapping("/cancel/{id}")
     public ResponseEntity<String> cancelTransaction(
             @PathVariable Integer id, @RequestBody Transaction transaction) {
 
@@ -51,7 +51,7 @@ public class TransactionController {
      * @param id .
      * @return .
      */
-    @GetMapping("/accept_transactions/{id}")
+    @GetMapping("/accept/{id}")
     public ResponseEntity<List<Transaction>> acceptTransactionsGet(@PathVariable Integer id) {
         List<Transaction> transactions = transactionService.getAllPendingTransactions(id);
         if (transactions != null){
@@ -67,7 +67,7 @@ public class TransactionController {
      * @param transaction .
      * @return .
      */
-    @PostMapping("/accept_transactions/{id}")
+    @PostMapping("/accept/{id}")
     public ResponseEntity<String> acceptTransactionsPost(
             @PathVariable Integer id, @RequestBody Transaction transaction) {
 

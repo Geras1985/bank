@@ -1,27 +1,55 @@
 package com.spring.bank.controllers;
 
-import com.spring.bank.entity.Transaction;
-import com.spring.bank.entity.User;
-import com.spring.bank.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.spring.bank.entities.Transaction;
+import com.spring.bank.entities.User;
+import com.spring.bank.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/user")
-public class UserController1 {
+@RequestMapping("/api/users")
+public class UserController {
 
-  @Autowired UserService userService;
+  final
+  UserService userService;
+
+  public UserController(UserService userService) {
+    this.userService = userService;
+  }
+
+  @GetMapping
+  @PreAuthorize("hasAuthority('read')")
+  public ResponseEntity<List<User>> getAll() {
+    List<User> userList = userService.getAllUsers();
+    if (userList == null) {
+      return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+    } else {
+      return new ResponseEntity<>(userList, HttpStatus.OK);
+    }
+  }
+
+  @GetMapping("/{id}")
+  @PreAuthorize("hasAuthority('read')")
+  public ResponseEntity<User> getById(@PathVariable Integer id) {
+    User user = userService.getUserById(id);
+    if (user == null) {
+      return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
+    } else {
+      return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+  }
 
   /**
-   * stugaca good
-   *
    * @param user .
    * @return .
    */
   @PostMapping("/register")
+  @PreAuthorize("hasAuthority('write')")
   public ResponseEntity<User> createUser(@RequestBody User user) {
 
     if (user.getUsername() == null || user.getUsername().trim().equals("")) {
@@ -32,7 +60,7 @@ public class UserController1 {
       return new ResponseEntity<>(user, HttpStatus.NOT_ACCEPTABLE);
     } else if (user.getPassword() == null || user.getPassword().trim().equals("")) {
       return new ResponseEntity<>(user, HttpStatus.NOT_ACCEPTABLE);
-    } else if (userService.getUserByUsername(user.getUsername()) != null) {
+    } else if (userService.getUserByUsername(user.getUsername()).isPresent()) {
       return new ResponseEntity<>(user, HttpStatus.NOT_ACCEPTABLE);
     } else {
       User registeredUser = userService.createUser(user);
@@ -51,7 +79,8 @@ public class UserController1 {
     }
   }
 
-  @GetMapping("/userHistory/{id}")
+  @GetMapping("/history/{id}")
+  @PreAuthorize("hasAuthority('read')")
   public ResponseEntity<Set<Transaction>> userHistoryPost(@PathVariable Integer id) {
     Set<Transaction> set = userService.getUserHistory(id);
     if (set == null) {
@@ -62,11 +91,10 @@ public class UserController1 {
   }
 
   /**
-   *
    * @param user .
    * @return .
    */
-  @PutMapping("/edit_users/{id}")
+  @PutMapping("/edit/{id}")
   public ResponseEntity<String> userEditPost(@PathVariable Integer id, @RequestBody User user) {
     User toBeChanged = userService.changeRoleOfUser(id, user);
     if (toBeChanged == null) {

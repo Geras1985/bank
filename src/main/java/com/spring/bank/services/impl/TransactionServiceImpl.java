@@ -1,12 +1,12 @@
-package com.spring.bank.service.impl;
+package com.spring.bank.services.impl;
 
-import com.spring.bank.entity.BankAccount;
-import com.spring.bank.entity.Transaction;
-import com.spring.bank.entity.User;
-import com.spring.bank.repository.BankAccountRepo;
-import com.spring.bank.repository.TransactionRepo;
-import com.spring.bank.repository.UserRepo;
-import com.spring.bank.service.TransactionService;
+import com.spring.bank.entities.BankAccount;
+import com.spring.bank.entities.Transaction;
+import com.spring.bank.entities.User;
+import com.spring.bank.repositories.BankAccountRepo;
+import com.spring.bank.repositories.TransactionRepo;
+import com.spring.bank.repositories.UserRepo;
+import com.spring.bank.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
+    //Method for Admin
     @Override
     public List<Transaction> getAllPendingTransactions(Integer loggedId) {
         User user = userRepo.findByid(loggedId);

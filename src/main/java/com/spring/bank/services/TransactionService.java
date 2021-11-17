@@ -1,6 +1,6 @@
-package com.spring.bank.service;
+package com.spring.bank.services;
 
-import com.spring.bank.entity.Transaction;
+import com.spring.bank.entities.Transaction;
 
 import java.util.List;
 

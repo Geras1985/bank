@@ -1,4 +1,4 @@
-package com.spring.bank.entity;
+package com.spring.bank.entities;
 
 import javax.persistence.*;
 import java.time.LocalDate;

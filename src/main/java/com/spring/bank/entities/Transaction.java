@@ -1,4 +1,4 @@
-package com.spring.bank.entity;
+package com.spring.bank.entities;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -6,6 +6,16 @@ import java.time.LocalDate;
 @Entity
 @Table(name="transaction", schema = "public")
 public class Transaction {
+    public Transaction() {
+    }
+
+    public Transaction(int id, String transactionType, String transactionStatus, Integer transactionSum, User user) {
+        this.id = id;
+        this.transactionType = transactionType;
+        this.transactionStatus = transactionStatus;
+        this.transactionSum = transactionSum;
+        this.user = user;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,16 +36,6 @@ public class Transaction {
     @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
-
-    public Transaction() {
-    }
-
-    public Transaction(int id, String transactionType, String transactionStatus, Integer transactionSum) {
-        this.id = id;
-        this.transactionType = transactionType;
-        this.transactionStatus = transactionStatus;
-        this.transactionSum = transactionSum;
-    }
 
     public int getId() {
         return id;
